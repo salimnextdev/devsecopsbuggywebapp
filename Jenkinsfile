@@ -20,7 +20,7 @@ pipeline {
 
 	stage('Build') { 
             steps { 
-               withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
+               docker.withRegistry([credentialsId: "dockerlogin", url: ""]) {
                  script{
                  app =  docker.build("salimnextdev")
                  }
