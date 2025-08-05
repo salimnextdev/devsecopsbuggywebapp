@@ -1,7 +1,7 @@
 pipeline {
   agent any
   tools { 
-        maven 'MAVEN_3_8_9'  
+        maven 'Maven_3_8_9'  
     }
    stages{
     stage('CompileandRunSonarAnalysis') {
@@ -18,24 +18,25 @@ pipeline {
 			}
     }
 
-	stage('Build') {
-            steps {
-                script {
-                    docker.withRegistry('https://467808956895.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:aws-credentials') {
-                        app = docker.build("salimnextdev")
-                    }
-                }
+	stage('Build') { 
+            steps { 
+               withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
+                 script{
+                 app =  docker.build("asg")
+                 }
+               }
             }
-        }
-
-        stage('Push') {
-            steps {
-                script {
-                    docker.withRegistry('https://467808956895.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:aws-credentials') {
-                        app.push("latest")
-                    }
-                }
-            }
-        }
     }
+
+	stage('Push') {
+            steps {
+                script{
+                    docker.withRegistry('https://467808956895.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:aws-credentials') {
+                    app.push("latest")
+                    }
+                }
+            }
+    	}
+	    
+  }
 }
